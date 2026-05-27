@@ -504,6 +504,7 @@ export default class BattleScene extends Phaser.Scene {
         }).setOrigin(1, 0).setInteractive();
         
         this.muteButton.on('pointerdown', () => this.toggleMute());
+        this.hudContainer.add(this.muteButton);
     }
 
     toggleMute() {
@@ -587,7 +588,7 @@ export default class BattleScene extends Phaser.Scene {
             this.player1.jump();
         }
 
-        if (Phaser.Input.Keyboard.JustDown(this.keysP1.attack)) {
+      if (Phaser.Input.Keyboard.JustDown(this.keysP1.attack)) {
             if (this.keysP1.down.isDown) {
                 this.player1.triggerSpecialShield();
             } else {
@@ -616,7 +617,7 @@ export default class BattleScene extends Phaser.Scene {
 
             const isP2AttackPressed = Phaser.Input.Keyboard.JustDown(this.keysP2.attack) || 
                                       Phaser.Input.Keyboard.JustDown(this.keysP2.attackNumpad);
-            if (isP2AttackPressed) {
+          if (isP2AttackPressed) {
                 if (this.keysP2.down.isDown) {
                     this.player2.triggerSpecialShield();
                 } else {
@@ -711,6 +712,7 @@ handleAIBehavior(aiPlayer, targetPlayer) {
 
     triggerSuper(fighter) {
         fighter.triggerSuperMove();
+        this.playSFX('super-charge');
     }
 
     cheerSpectators() {
