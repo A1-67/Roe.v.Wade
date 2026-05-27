@@ -20,6 +20,8 @@ export class AudioManager {
 
     preload() {
         this.scene.load.audio('court-battle', 'assests/audio/court-battle.mp3');
+        this.scene.load.audio('gavel-hit', 'assests/audio/gavel-hit.mp3');
+        this.scene.load.audio('super-charge', 'assests/audio/super-charge.mp3');
     }
 
     init() {
@@ -144,12 +146,49 @@ export class AudioManager {
         }
     }
 
-    playSFX(key) {
-        // SFX disabled — background music only
+playSFX(key) {
+        if (this.muted) return;
+        if (this.sounds[key]) {
+            try {
+                this.sounds[key].play();
+            } catch (e) {
+                this.playProceduralSFX(key);
+            }
+        } else {
+            this.playProceduralSFX(key);
+        }
     }
 
     playProceduralSFX(key) {
-        // SFX disabled — background music only
+        try {
+            const ctx = window.AudioContext || window.webkitAudioContext;
+            if (!ctx) return;
+            const audioCtx = new ctx();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (key === 'gavel-hit') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.16);
+                gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.17);
+            } else if (key === 'super-charge') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(760, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            }
+        } catch (err) {
+            console.error('Procedural audio failed:', err);
+        }
     }
 
     toggleMute() {
