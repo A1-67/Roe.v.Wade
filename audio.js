@@ -19,7 +19,7 @@ export class AudioManager {
     }
 
     preload() {
-        this.scene.load.audio('court-battle', 'assets/audio/court-battle.mp3');
+        this.scene.load.audio('court-battle', 'assests/audio/court-battle.mp3');
     }
 
     init() {
